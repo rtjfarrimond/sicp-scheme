@@ -4,7 +4,8 @@ import scala.collection.mutable
 
 object Lexer {
 
-  private val reservedChars = parensTokens ++ NumericOperator.tokens
+  val numericOperatorTokens = Set('+', '-', '*', '/') // TODO: Move this somewhere better
+  private val reservedChars = parensTokens ++ numericOperatorTokens
   private val whitespace = Set(' ', '\t')
 
   // TODO: StringBuilder buffer

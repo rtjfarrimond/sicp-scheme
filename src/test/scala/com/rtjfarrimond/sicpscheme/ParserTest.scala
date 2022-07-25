@@ -1,41 +1,73 @@
 package com.rtjfarrimond.sicpscheme
 
+import cats.data.NonEmptyList
+import com.rtjfarrimond.sicpscheme.ast.*
 import munit.FunSuite
 
 import scala.collection.mutable
 
 class ParserTest extends FunSuite {
 
-  test("Must parse a single expression") {
-    val tokens = mutable.Queue("(", "+", "23", "19", ")")
+  test("IllegalStartOfExpression when expression does not begin with '('") {
+    val tokens = mutable.Queue("+", ")")
 
-    val expected = Expression(Plus, 23, 19)
-    val result = Parser.parse(tokens).head
-    assert(result.isRight)
-
-    val Right(actual) = result
-    assertEquals(expected, actual)
+    val expected = IllegalStartOfExpression('+')
+    val result = Parser.parse(tokens)
+    assert(result.isLeft)
+    val Left(actual) = result
+    assertEquals(actual, expected)
   }
 
-  test("Must parse nested expressions") {
-    val tokens = mutable.Queue("(", "+", "24", "(", "*", "2", "9", ")", ")")
-    val expected = Expression(Plus, 24, Expression(Multiply, 2, 9))
+  test("Must parse the unit of addition") {
+    val tokens = mutable.Queue("(", "+", ")")
 
-    val result = Parser.parse(tokens).head
-    println(result)
+    val expected: AbstractSyntaxTree = Plus.unit
+    val result = Parser.parse(tokens)
     assert(result.isRight)
     val Right(actual) = result
     assertEquals(expected, actual)
+    assertEquals(actual.value, 0)
   }
 
-  test("Must parse multiple un-nested expressions") {
-    val tokens = mutable.Queue("(", "+", "(", "+", "15", "17", ")", "(", "+", "2", "8", ")", ")")
-    val expected = Expression(Plus, Expression(Plus, 15, 17), Expression(Plus, 2, 7))
+  test("Must parse the unit of multiplication") {
+    val tokens = mutable.Queue("(", "*", ")")
 
-    val result = Parser.parse(tokens).head
+    val expected: AbstractSyntaxTree = Multiply.unit
+    val result = Parser.parse(tokens)
     assert(result.isRight)
     val Right(actual) = result
     assertEquals(expected, actual)
+    assertEquals(actual.value, 1)
+  }
+
+  test("TooFewArguments for division with 0 args") {
+    val tokens = mutable.Queue("(", "/", ")")
+
+    val expected = TooFewArguments(1, 0)
+    val result = Parser.parse(tokens)
+    assert(result.isLeft)
+    val Left(actual) = result
+    assertEquals(actual, expected)
+  }
+
+  test("TooFewArguments for subtraction with 0 args") {
+    val tokens = mutable.Queue("(", "-", ")")
+
+    val expected = TooFewArguments(1, 0)
+    val result = Parser.parse(tokens)
+    assert(result.isLeft)
+    val Left(actual) = result
+    assertEquals(actual, expected)
+  }
+
+  test("Parse a simple addition") {
+    val tokens = mutable.Queue("(", "+", "11", "31", ")")
+
+    val expected = Plus(NonEmptyList.of(Literal(11), Literal(31)))
+    val result = Parser.parse(tokens)
+    assert(result.isRight)
+    val Right(actual) = result
+    assertEquals(actual, expected)
   }
 
 }

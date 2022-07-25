@@ -15,6 +15,8 @@ case class Plus(children: NonEmptyList[AbstractSyntaxTree]) extends Node {
   override def value: Int = children.map(_.value).toList.sum
 }
 object Plus {
+  def unit: Plus = Plus(List.empty)
+  
   def apply(childNodes: List[AbstractSyntaxTree]): Plus =
     childNodes.match {
       case Nil =>
@@ -33,6 +35,8 @@ case class Multiply(children: NonEmptyList[AbstractSyntaxTree]) extends Node {
   override def value: Int = children.map(_.value).toList.product
 }
 object Multiply {
+  def unit: Multiply = Multiply(List.empty)
+  
   def apply(childNodes: List[AbstractSyntaxTree]): Multiply =
     childNodes.match {
       case Nil =>
@@ -48,6 +52,7 @@ case class Divide(children: NonEmptyList[AbstractSyntaxTree]) extends Node {
   }
 }
 
+// TODO: Move this to a test
 object Main extends App {
 
   val baz = Plus(
