@@ -4,11 +4,10 @@ import scala.collection.mutable
 
 object Lexer {
 
-  val numericOperatorTokens = Set('+', '-', '*', '/') // TODO: Move this somewhere better
+  val numericOperatorTokens: Set[Char] = Set('+', '-', '*', '/') // TODO: Move this somewhere better
   private val reservedChars = parensTokens ++ numericOperatorTokens
   private val whitespace = Set(' ', '\t')
 
-  // TODO: StringBuilder buffer
   def tokenize(body: String): mutable.Queue[String] = {
     @scala.annotation.tailrec
     def loop(acc: mutable.Queue[String], buff: String, rest: Seq[Char]): mutable.Queue[String] = {
