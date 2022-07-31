@@ -8,6 +8,7 @@ object Lexer {
   private val reservedChars = parensTokens ++ numericOperatorTokens
   private val whitespace = Set(' ', '\t')
 
+  // TODO: Make this return a list, mutability is confusing. Perhaps change back later, but for now is premature
   def tokenize(body: String): mutable.Queue[String] = {
     @scala.annotation.tailrec
     def loop(acc: mutable.Queue[String], buff: String, rest: Seq[Char]): mutable.Queue[String] = {

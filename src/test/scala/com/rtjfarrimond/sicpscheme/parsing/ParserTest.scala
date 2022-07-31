@@ -91,8 +91,18 @@ class ParserTest extends FunSuite {
     assertEquals(actual, expected)
   }
 
+  test("getParsableExpression must return all between matching parens") {
+    val input = List("(", "+", "11", "(", "+", "15", "16", ")", ")")
+    val tokens = mutable.Queue.from(input)
+
+    val actual = Parser.getOutermostExpression(tokens)
+    val expected = List("+", "11", "(", "+", "15", "16", ")")
+
+    assertEquals(actual, mutable.Queue.from(expected))
+  }
+
   test("Parse a recursive addition") {
-    val tokens = mutable.Queue("(", "+", "11", "(", "+", "15", "16", ")")
+    val tokens = mutable.Queue("(", "+", "11", "(", "+", "15", "16", ")", ")")
 
     val expected = Plus(NonEmptyList.of(Literal(11), Plus(NonEmptyList.of(Literal(15), Literal(16)))))
     val result = Parser.parse(tokens)

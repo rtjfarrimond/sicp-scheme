@@ -10,6 +10,38 @@ import scala.collection.mutable
 import scala.util.{Failure, Success, Try}
 
 object Parser {
+
+  def newParse(tokens: mutable.Queue[String]): Either[ParsingError, AbstractSyntaxTree] = {
+    def loop(tokens: mutable.Queue[String], acc: AbstractSyntaxTree): Either[ParsingError, AbstractSyntaxTree] = {
+      ???
+    }
+    if (tokens.head != "(") Left(IllegalStartOfExpression(tokens.head.head))
+    else {
+
+      val initialAst:AbstractSyntaxTree = ???
+      loop(tokens, initialAst)
+    }
+  }
+
+  private[parsing] def getOutermostExpression(tokens: mutable.Queue[String]): mutable.Queue[String] = {
+    @tailrec
+    def loop(openParensCount: Int, acc: mutable.Queue[String], rest: mutable.Queue[String]): mutable.Queue[String] = {
+      rest.dequeue() match {
+        case "(" if openParensCount == 0 =>
+          loop(openParensCount + 1, acc, rest)
+        case s @ "(" =>
+          loop(openParensCount + 1, acc.enqueue(s), rest)
+        case ")" if openParensCount == 1 && rest.isEmpty =>
+          acc
+        case s @ ")" =>
+          loop(openParensCount - 1, acc.enqueue(s), rest)
+        case s =>
+          loop(openParensCount, acc.enqueue(s), rest)
+      }
+    }
+    loop(openParensCount = 0, mutable.Queue.empty, tokens)
+  }
+
   def parse(tokens: mutable.Queue[String]): Either[ParsingError, AbstractSyntaxTree] = {
     @tailrec
     def loop(
