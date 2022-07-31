@@ -8,12 +8,12 @@ case class Plus(children: NonEmptyList[AbstractSyntaxTree]) extends NumericOpera
   override def value: Int = children.map(_.value).toList.sum
 }
 object Plus {
-  def unit: Plus = Plus(List.empty)
+  def unit: Plus = Plus(NonEmptyList.of(Literal(0)))
 
   def apply(childNodes: List[AbstractSyntaxTree]): Plus =
     childNodes.match {
       case Nil =>
-        Plus(NonEmptyList.of(Literal(0)))
+        unit
       case head :: tail =>
         Plus(NonEmptyList(head, tail))
     }
@@ -23,12 +23,12 @@ case class Multiply(children: NonEmptyList[AbstractSyntaxTree]) extends NumericO
   override def value: Int = children.map(_.value).toList.product
 }
 object Multiply {
-  def unit: Multiply = Multiply(List.empty)
+  def unit: Multiply = Multiply(NonEmptyList.of(Literal(1)))
 
   def apply(childNodes: List[AbstractSyntaxTree]): Multiply =
     childNodes.match {
       case Nil =>
-        Multiply(NonEmptyList.of(Literal(1)))
+        unit
       case head :: tail =>
         Multiply(NonEmptyList(head, tail))
     }
