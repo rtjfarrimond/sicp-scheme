@@ -8,10 +8,10 @@ import com.rtjfarrimond.sicpscheme.parsing.ParsingError.*
 import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
-object Parser {
+object AstParser {
 
-  def parseExpression(tokens: List[String]): AbstractSyntaxTree = {
-    val (exprTokens, _) = getOutermostExpressionTokens(tokens) // TODO: What happens when rest is non-empty?
+  def parseAst(tokens: List[String]): AbstractSyntaxTree = {
+    val (exprTokens, _) = getFirstOutermostExpressionTokens(tokens) // TODO: What happens when rest is non-empty?
     NumericOperationParser.newParse(exprTokens.head, parseChildren(exprTokens.tail))
   }
 
@@ -21,8 +21,8 @@ object Parser {
       if (tokens.isEmpty) acc
       else tokens.head match {
         case "(" =>
-          val (exprTokens, rest) = getOutermostExpressionTokens(tokens)
-          loop(rest, acc :+ parseExpression(exprTokens.prepended("(").appended(")")))
+          val (exprTokens, rest) = getFirstOutermostExpressionTokens(tokens)
+          loop(rest, acc :+ parseAst(exprTokens.prepended("(").appended(")")))
         case s =>
           loop(tokens.tail, acc :+ Literal(s.toInt))
       }
@@ -30,7 +30,7 @@ object Parser {
     loop(tokens, List.empty)
   }
 
-  private[parsing] def getOutermostExpressionTokens(tokens: List[String]): (List[String], List[String]) = {
+  private[parsing] def getFirstOutermostExpressionTokens(tokens: List[String]): (List[String], List[String]) = {
     @tailrec
     def loop(openParensCount: Int, acc: List[String], rest: List[String]): (List[String], List[String]) = {
       rest.head match {

@@ -2,10 +2,10 @@ package com.rtjfarrimond.sicpscheme.ast
 
 import cats.data.NonEmptyList
 
-trait NumericOperation extends Node
+sealed trait NumericOperation extends Node
 
 case class Plus(children: NonEmptyList[AbstractSyntaxTree]) extends NumericOperation {
-  override def value: Int = children.map(_.value).toList.sum
+  override lazy val value: Int = children.map(_.value).toList.sum
 }
 object Plus {
   def unit: Plus = Plus(NonEmptyList.of(Literal(0)))
@@ -20,7 +20,7 @@ object Plus {
 }
 
 case class Multiply(children: NonEmptyList[AbstractSyntaxTree]) extends NumericOperation {
-  override def value: Int = children.map(_.value).toList.product
+  override lazy val value: Int = children.map(_.value).toList.product
 }
 object Multiply {
   def unit: Multiply = Multiply(NonEmptyList.of(Literal(1)))
@@ -35,14 +35,14 @@ object Multiply {
 }
 
 case class Minus(children: NonEmptyList[AbstractSyntaxTree]) extends NumericOperation {
-  override def value: Int = {
+  override lazy val value: Int = {
     val values = children.map(_.value)
     values.tail.foldLeft(values.head)(_ - _)
   }
 }
 
 case class Divide(children: NonEmptyList[AbstractSyntaxTree]) extends NumericOperation {
-  override def value: Int = {
+  override lazy val value: Int = {
     val values = children.map(_.value)
     values.tail.foldLeft(values.head)(_ / _)
   }
