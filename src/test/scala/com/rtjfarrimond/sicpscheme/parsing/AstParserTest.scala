@@ -22,7 +22,7 @@ class AstParserTest extends FunSuite {
 
     val actual = AstParser.parseAst(tokens)
 
-    val expected = Plus(List(15, 16, 11).map(Literal.apply))
+    val expected = Right(Plus(List(15, 16, 11).map(Literal.apply)))
     assertEquals(actual, expected)
   }
 
@@ -31,7 +31,7 @@ class AstParserTest extends FunSuite {
 
     val actual = AstParser.parseAst(tokens)
 
-    val expected = Plus(NonEmptyList.of(Literal(11), Plus(NonEmptyList.of(Literal(15), Literal(16)))))
+    val expected = Right(Plus(NonEmptyList.of(Literal(11), Plus(NonEmptyList.of(Literal(15), Literal(16))))))
     assertEquals(actual, expected)
   }
 
@@ -42,20 +42,20 @@ class AstParserTest extends FunSuite {
 
     val lhs = Plus(NonEmptyList.of(Literal(5), Literal(6)))
     val rhs = Plus(NonEmptyList.of(Literal(15), Literal(16)))
-    val expected = Plus(NonEmptyList.of(lhs, rhs))
+    val expected = Right(Plus(NonEmptyList.of(lhs, rhs)))
     assertEquals(actual, expected)
   }
 
   test("Parse the unit of addition") {
     val tokens = List("(", "+", ")")
     val actual = AstParser.parseAst(tokens)
-    assertEquals(actual, Plus.unit)
+    assertEquals(actual, Right(Plus.unit))
   }
 
   test("Parse the unit of multiplication") {
     val tokens = List("(", "*", ")")
     val actual = AstParser.parseAst(tokens)
-    assertEquals(actual, Multiply.unit)
+    assertEquals(actual, Right(Multiply.unit))
   }
 
 }

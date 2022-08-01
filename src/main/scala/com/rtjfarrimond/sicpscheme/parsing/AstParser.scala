@@ -10,24 +10,29 @@ import scala.util.{Failure, Success, Try}
 
 object AstParser {
 
-  def parseAst(tokens: List[String]): AbstractSyntaxTree = {
-    val (exprTokens, _) = getFirstOutermostExpressionTokens(tokens) // TODO: What happens when rest is non-empty?
-    NumericOperationParser.newParse(exprTokens.head, parseChildren(exprTokens.tail))
-  }
-
-  private def parseChildren(tokens: List[String]): List[AbstractSyntaxTree] = {
-    @tailrec
-    def loop(tokens: List[String], acc: List[AbstractSyntaxTree]): List[AbstractSyntaxTree] = {
-      if (tokens.isEmpty) acc
-      else tokens.head match {
-        case "(" =>
-          val (exprTokens, rest) = getFirstOutermostExpressionTokens(tokens)
-          loop(rest, acc :+ parseAst(exprTokens.prepended("(").appended(")")))
-        case s =>
-          loop(tokens.tail, acc :+ Literal(s.toInt))
+  def parseAst(tokens: List[String]): Either[ParsingError, AbstractSyntaxTree] = {
+    val (exprTokens, rest) = getFirstOutermostExpressionTokens(tokens)
+    if (rest.nonEmpty) Left(InvalidExpression) // TODO: More detailed error & test for this case
+    else {
+      parseChildren(exprTokens.tail, List.empty).map { children =>
+        NumericOperationParser.newParse(exprTokens.head, children)
       }
     }
-    loop(tokens, List.empty)
+  }
+
+  @tailrec
+  private def parseChildren(tokens: List[String], acc: List[AbstractSyntaxTree]): Either[ParsingError, List[AbstractSyntaxTree]] = {
+    if (tokens.isEmpty) Right(acc)
+    else tokens.head match {
+      case "(" =>
+        val (exprTokens, rest) = getFirstOutermostExpressionTokens(tokens)
+        parseAst(exprTokens.prepended("(").appended(")")) match {
+          case Left(pe) => Left(pe)
+          case Right(ast) => parseChildren(rest, acc :+ ast)
+        }
+      case s =>
+        parseChildren(tokens.tail, acc :+ Literal(s.toInt))
+    }
   }
 
   private[parsing] def getFirstOutermostExpressionTokens(tokens: List[String]): (List[String], List[String]) = {
