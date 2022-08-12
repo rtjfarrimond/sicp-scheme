@@ -6,14 +6,13 @@ import munit.FunSuite
 
 class InterpreterTest extends FunSuite {
 
-  test("run must compute the value of an AST") {
-    val lhs = Plus(List(Literal(3), Literal(7)))
-    val rhs = Plus(List(Literal(2), Literal(30)))
-    val input = Plus(List(lhs, rhs))
+  test("interpret must interpret the command and return a formatted string with the result") {
+    val input = "(+ 3 7 2 30)"
 
-    val actual = Interpreter.run(input)
+    val actual = Interpreter.interpret(input)
 
-    val expected = 3 + 7 + 2 + 30
+    val sum = 3 + 7 + 2 + 30
+    val expected = s"res: $sum\n"
     assertEquals(actual, expected)
   }
 
