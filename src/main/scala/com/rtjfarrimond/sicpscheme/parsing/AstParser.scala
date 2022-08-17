@@ -13,7 +13,7 @@ object AstParser {
   def parseAst(tokens: List[String]): Either[ParsingError, AbstractSyntaxTree] =
     tokens match {
       case Nil =>
-        Left(InvalidExpression) // TODO: More specific error, or no error here (might require an empty ast representation)
+        Left(InvalidExpression)
       case firstString :: _ if firstString.head != '(' =>
         Left(IllegalStartOfExpression(firstString.head))
       case _ =>
@@ -41,7 +41,12 @@ object AstParser {
           case Right(ast) => parseChildren(rest, acc :+ ast)
         }
       case s =>
-        parseChildren(tokens.tail, acc :+ Literal(s.toInt))
+        Try(s.toInt) match {
+          case Failure(_) =>
+            Left(FailedToParseInt(s))
+          case Success(parsedInt) =>
+            parseChildren(tokens.tail, acc :+ Literal(parsedInt))
+        }
     }
   }
 

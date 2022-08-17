@@ -21,7 +21,7 @@ class InterpreterTest extends FunSuite {
 
     val actual = Interpreter.interpret(input)
 
-    val expected = "err: Expected '(' but found +"
+    val expected = "err: Expected '(' but found '+'"
     assertNoDiff(actual, expected)
   }
 

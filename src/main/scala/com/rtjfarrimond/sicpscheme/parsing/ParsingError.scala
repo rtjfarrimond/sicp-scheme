@@ -19,11 +19,15 @@ object ParsingError {
   }
 
   case class IllegalStartOfExpression(found: Char) extends ParsingError {
-    override def message: String = s"Expected '(' but found $found"
+    override def message: String = s"Expected '(' but found '$found'"
   }
 
   case class IllegalEndOfExpression(found: Char) extends ParsingError {
-    override def message: String = s"Expected ')' but found $found"
+    override def message: String = s"Expected ')' but found '$found'"
+  }
+
+  case class FailedToParseInt(from: String) extends ParsingError {
+    override def message: String = s"Failed to parse and integer from input '$from'"
   }
 
 }

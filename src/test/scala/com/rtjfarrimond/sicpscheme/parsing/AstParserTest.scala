@@ -79,4 +79,10 @@ class AstParserTest extends FunSuite {
     assertEquals(actual, Left(IllegalEndOfExpression('1')))
   }
 
+  test("error when fail to parse integer") {
+    val notAnInt = "abc"
+    val actual = AstParser.parseAst(List("(", "+", "11", notAnInt, ")"))
+    assertEquals(actual, Left(FailedToParseInt(notAnInt)))
+  }
+
 }

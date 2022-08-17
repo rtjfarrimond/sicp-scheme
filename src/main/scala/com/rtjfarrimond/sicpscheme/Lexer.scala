@@ -2,8 +2,9 @@ package com.rtjfarrimond.sicpscheme
 
 object Lexer {
 
-  val numericOperatorTokens: Set[Char] = Set('+', '-', '*', '/') // TODO: Move this somewhere better
-  val reservedChars = parensTokens ++ numericOperatorTokens
+  private val parensTokens = Set('(', ')')
+  private val numericOperatorTokens = Set('+', '-', '*', '/')
+  private val reservedChars = parensTokens ++ numericOperatorTokens
   private val whitespace = Set(' ', '\t')
 
   def tokenize(body: String): List[String] = {
