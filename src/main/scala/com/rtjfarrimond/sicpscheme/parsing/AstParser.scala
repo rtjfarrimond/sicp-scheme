@@ -3,22 +3,32 @@ package com.rtjfarrimond.sicpscheme.parsing
 import cats.data.NonEmptyList
 import com.rtjfarrimond.sicpscheme.Lexer
 import com.rtjfarrimond.sicpscheme.ast.{AbstractSyntaxTree, Literal}
-import com.rtjfarrimond.sicpscheme.parsing.ParsingError.*
+import com.rtjfarrimond.sicpscheme.parsing.ParsingError._
 
 import scala.annotation.tailrec
 import scala.util.{Failure, Success, Try}
 
 object AstParser {
 
-  def parseAst(tokens: List[String]): Either[ParsingError, AbstractSyntaxTree] = {
-    val (exprTokens, rest) = getFirstOutermostExpressionTokens(tokens)
-    if (rest.nonEmpty) Left(InvalidExpression) // TODO: More detailed error & test for this case
-    else {
-      parseChildren(exprTokens.tail, List.empty).map { children =>
-        NumericOperationParser.newParse(exprTokens.head, children)
-      }
+  def parseAst(tokens: List[String]): Either[ParsingError, AbstractSyntaxTree] =
+    tokens match {
+      case Nil =>
+        Left(InvalidExpression) // TODO: More specific error, or no error here (might require an empty ast representation)
+      case firstString :: _ if firstString.head != '(' =>
+        Left(IllegalStartOfExpression(firstString.head))
+      case _ =>
+        val lastChar = tokens.last.last
+        if (lastChar != ')') Left(IllegalEndOfExpression(lastChar))
+        else {
+          val (exprTokens, rest) = getFirstOutermostExpressionTokens(tokens)
+          if (rest.nonEmpty) Left(IllegalStartOfExpression(rest.head.head))
+          else {
+            parseChildren(exprTokens.tail, List.empty).map { children =>
+              NumericOperationParser.newParse(exprTokens.head, children)
+            }
+          }
+        }
     }
-  }
 
   @tailrec
   private def parseChildren(tokens: List[String], acc: List[AbstractSyntaxTree]): Either[ParsingError, List[AbstractSyntaxTree]] = {
@@ -35,7 +45,9 @@ object AstParser {
     }
   }
 
-  private[parsing] def getFirstOutermostExpressionTokens(tokens: List[String]): (List[String], List[String]) = {
+  private[parsing] def getFirstOutermostExpressionTokens(
+    tokens: List[String]
+  ): (List[String], List[String]) = {
     @tailrec
     def loop(openParensCount: Int, acc: List[String], rest: List[String]): (List[String], List[String]) = {
       rest.head match {

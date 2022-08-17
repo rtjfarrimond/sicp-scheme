@@ -3,6 +3,7 @@ package com.rtjfarrimond.sicpscheme.parsing
 import cats.data.NonEmptyList
 import com.rtjfarrimond.sicpscheme.ast._
 import com.rtjfarrimond.sicpscheme.parsing.AstParser
+import com.rtjfarrimond.sicpscheme.parsing.ParsingError._
 import munit.FunSuite
 
 class AstParserTest extends FunSuite {
@@ -56,6 +57,26 @@ class AstParserTest extends FunSuite {
     val tokens = List("(", "*", ")")
     val actual = AstParser.parseAst(tokens)
     assertEquals(actual, Right(Multiply.unit))
+  }
+
+  test("error given empty list as input") {
+    val actual = AstParser.parseAst(Nil)
+    assertEquals(actual, Left(InvalidExpression))
+  }
+
+  test("error given expression missing opening paren") {
+    val actual = AstParser.parseAst(List("+", "11", "31", ")"))
+    assertEquals(actual, Left(IllegalStartOfExpression('+')))
+  }
+
+  test("error given expression missing opening paren in nested expression") {
+    val actual = AstParser.parseAst(List("(", "+", "7", "31", ")", "4", ")"))
+    assertEquals(actual, Left(IllegalStartOfExpression('4')))
+  }
+
+  test("error given expression missing closing paren") {
+    val actual = AstParser.parseAst(List("(", "+", "11", "31"))
+    assertEquals(actual, Left(IllegalEndOfExpression('1')))
   }
 
 }

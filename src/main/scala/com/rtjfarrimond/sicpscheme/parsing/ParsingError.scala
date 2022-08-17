@@ -17,4 +17,13 @@ object ParsingError {
   case object InvalidExpression extends ParsingError {
     override def message: String = "Failed to parse expression"
   }
+
+  case class IllegalStartOfExpression(found: Char) extends ParsingError {
+    override def message: String = s"Expected '(' but found $found"
+  }
+
+  case class IllegalEndOfExpression(found: Char) extends ParsingError {
+    override def message: String = s"Expected ')' but found $found"
+  }
+
 }

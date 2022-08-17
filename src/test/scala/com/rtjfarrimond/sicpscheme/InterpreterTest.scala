@@ -6,7 +6,7 @@ import munit.FunSuite
 
 class InterpreterTest extends FunSuite {
 
-  test("interpret must interpret the command and return a formatted string with the result") {
+  test("must return formatted string for valid input") {
     val input = "(+ 3 7 2 30)"
 
     val actual = Interpreter.interpret(input)
@@ -14,6 +14,15 @@ class InterpreterTest extends FunSuite {
     val sum = 3 + 7 + 2 + 30
     val expected = s"res: $sum\n"
     assertEquals(actual, expected)
+  }
+
+  test("must return a string describing the error for invalid input") {
+    val input = "+ 11 31)"
+
+    val actual = Interpreter.interpret(input)
+
+    val expected = "err: Expected '(' but found +"
+    assertNoDiff(actual, expected)
   }
 
 }
