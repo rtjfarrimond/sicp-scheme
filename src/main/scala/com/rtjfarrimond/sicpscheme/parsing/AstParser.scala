@@ -23,7 +23,7 @@ object AstParser {
           val (exprTokens, rest) = getFirstOutermostExpressionTokens(tokens)
           if (rest.nonEmpty) Left(IllegalStartOfExpression(rest.head.head))
           else {
-            parseChildren(exprTokens.tail, List.empty).map { children =>
+            parseChildren(exprTokens.tail, List.empty).flatMap { children =>
               NumericOperationParser.parse(exprTokens.head, children)
             }
           }

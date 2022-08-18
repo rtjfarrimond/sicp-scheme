@@ -2,24 +2,28 @@ package com.rtjfarrimond.sicpscheme.parsing
 
 import cats.data.NonEmptyList
 import com.rtjfarrimond.sicpscheme.ast.{AbstractSyntaxTree, Divide, Literal, Minus, Multiply, NumericOperation, Plus}
-import com.rtjfarrimond.sicpscheme.parsing.ParsingError.{TooFewArguments, UnknownOperator}
+import com.rtjfarrimond.sicpscheme.parsing.ParsingError.{FailedToParseNumericOperation, TooFewArguments, UnknownOperator}
 
 object NumericOperationParser {
-  // TODO: Tests for this
-  def parse(str: String, children: List[AbstractSyntaxTree]): NumericOperation = {
+  def parse(
+    str: String,
+    children: List[AbstractSyntaxTree]
+  ): Either[FailedToParseNumericOperation, NumericOperation] = {
     str match {
-      case "+" =>
+      case "+" => Right {
         if (children.nonEmpty) Plus(NonEmptyList(children.head, children.tail))
         else Plus.unit
-      case "*" =>
+      }
+      case "*" => Right {
         if (children.nonEmpty) Multiply(NonEmptyList(children.head, children.tail))
         else Multiply.unit
+      }
       case "-" if children.nonEmpty =>
-        Minus(NonEmptyList(children.head, children.tail))
+        Right(Minus(NonEmptyList(children.head, children.tail)))
       case "/" if children.nonEmpty =>
-        Divide(NonEmptyList(children.head, children.tail))
+        Right(Divide(NonEmptyList(children.head, children.tail)))
       case s =>
-        throw new RuntimeException("BANG!") // TODO: Make this better
+        Left(FailedToParseNumericOperation(s))
     }
   }
 }

@@ -30,4 +30,8 @@ object ParsingError {
     override def message: String = s"Failed to parse and integer from input '$from'"
   }
 
+  case class FailedToParseNumericOperation(from: String) extends ParsingError {
+    override def message: String = s"Failed to parse a numeric operation from input '$from'"
+  }
+
 }
