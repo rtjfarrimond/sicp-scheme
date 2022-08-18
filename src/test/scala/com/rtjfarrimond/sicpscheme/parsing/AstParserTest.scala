@@ -18,6 +18,15 @@ class AstParserTest extends FunSuite {
     assertEquals(actual, expected)
   }
 
+  test("parse an integer literal") {
+    val tokens = List("42")
+
+    val actual = AstParser.parseAst(tokens)
+
+    val expected = Right(Literal(42))
+    assertEquals(actual, expected)
+  }
+
   test("Parse a simple addition") {
     val tokens = List("(", "+", "15", "16", "11", ")")
 

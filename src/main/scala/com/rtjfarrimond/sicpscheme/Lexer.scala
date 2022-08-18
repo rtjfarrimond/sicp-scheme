@@ -10,8 +10,10 @@ object Lexer {
   def tokenize(body: String): List[String] = {
     @scala.annotation.tailrec
     def loop(acc: List[String], buff: String, rest: Seq[Char]): List[String] = {
-      if (rest.isEmpty)
-        acc
+      if (rest.isEmpty) buff match {
+        case "" => acc
+        case _ => acc.appended(buff)
+      }
       else if ((reservedChars contains rest.head) && buff.isEmpty)
         loop(acc.appended(rest.head.toString), buff, rest.tail)
       else if ((reservedChars contains rest.head) && buff.nonEmpty)

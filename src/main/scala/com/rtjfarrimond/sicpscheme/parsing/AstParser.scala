@@ -6,7 +6,6 @@ import com.rtjfarrimond.sicpscheme.ast.{AbstractSyntaxTree, Literal}
 import com.rtjfarrimond.sicpscheme.parsing.ParsingError._
 
 import scala.annotation.tailrec
-import scala.util.{Failure, Success, Try}
 
 object AstParser {
 
@@ -14,6 +13,13 @@ object AstParser {
     tokens match {
       case Nil =>
         Left(InvalidExpression)
+      case head :: Nil =>
+        Literal.fromString(head) match {
+          case None =>
+            Left(FailedToParseInt(head))
+          case Some(literal) =>
+            Right(literal)
+        }
       case firstString :: _ if firstString.head != '(' =>
         Left(IllegalStartOfExpression(firstString.head))
       case _ =>
@@ -41,11 +47,11 @@ object AstParser {
           case Right(ast) => parseChildren(rest, acc :+ ast)
         }
       case s =>
-        Try(s.toInt) match {
-          case Failure(_) =>
+        Literal.fromString(s) match {
+          case None =>
             Left(FailedToParseInt(s))
-          case Success(parsedInt) =>
-            parseChildren(tokens.tail, acc :+ Literal(parsedInt))
+          case Some(literal) =>
+            parseChildren(tokens.tail, acc :+ literal)
         }
     }
   }

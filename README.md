@@ -15,11 +15,11 @@ and examples in Structure and Interpretation of Computer Programs (SICP).
 
 ## TODO
 
-- Evaluate integer literals without parens
 - Bring current behaviour and error model inline with Berkley interpreter
 - Extend prefix notation calculations to support real numbers
 - Variables in the global environment
 
 ## Done
 
+- Evaluate integer literals without parens
 - Prefix notation calculations for + - * / on integers
