@@ -12,3 +12,14 @@ and examples in Structure and Interpretation of Computer Programs (SICP).
 
 [berkley-scheme]: https://inst.eecs.berkeley.edu/~cs61a/fa14/assets/interpreter/scheme.html
 [sicp-pdf]: https://web.mit.edu/6.001/6.037/sicp.pdf
+
+## TODO
+
+- Evaluate integer literals without parens
+- Bring current behaviour and error model inline with Berkley interpreter
+- Extend prefix notation calculations to support real numbers
+- Variables in the global environment
+
+## Done
+
+- Prefix notation calculations for + - * / on integers
