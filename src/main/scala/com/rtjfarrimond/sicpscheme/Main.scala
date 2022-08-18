@@ -9,7 +9,7 @@ import scala.concurrent.duration._
 
 object Main extends IOApp.Simple {
 
-  val run =
+  val run: IO[Unit] =
     Stream
       .repeatEval(IO(print("> ")) *> Console[IO].readLine)
       .map(Interpreter.interpret)

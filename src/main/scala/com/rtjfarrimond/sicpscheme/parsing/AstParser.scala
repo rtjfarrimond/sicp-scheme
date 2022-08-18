@@ -24,7 +24,7 @@ object AstParser {
           if (rest.nonEmpty) Left(IllegalStartOfExpression(rest.head.head))
           else {
             parseChildren(exprTokens.tail, List.empty).map { children =>
-              NumericOperationParser.newParse(exprTokens.head, children)
+              NumericOperationParser.parse(exprTokens.head, children)
             }
           }
         }
