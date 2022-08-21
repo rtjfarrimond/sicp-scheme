@@ -15,7 +15,12 @@ and examples in Structure and Interpretation of Computer Programs (SICP).
 
 ## TODO
 
-- Bring current behaviour and error model inline with Berkley interpreter
+- Bring behaviour in line with Berkley interpreter
+  - Consistent error model
+  - Distinguish between syntax error and scheme error
+  - Evaluation stack
+- Check whether the Berkley interpreter is actually worth copying
+  or if I should find something more official
 - Extend prefix notation calculations to support real numbers
 - Variables in the global environment
 

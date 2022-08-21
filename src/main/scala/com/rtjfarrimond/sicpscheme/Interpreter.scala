@@ -1,13 +1,21 @@
 package com.rtjfarrimond.sicpscheme
 
-import com.rtjfarrimond.sicpscheme.ast.{AbstractSyntaxTree, Leaf, Literal, Node}
+import cats.data.NonEmptyList
+import cats.syntax.all._
+import com.rtjfarrimond.sicpscheme.ast.{AbstractSyntaxTree, Leaf, Node, NumericLiteral, PrimitiveProcedure}
+import com.rtjfarrimond.sicpscheme.parsing.NumericParser
+import com.rtjfarrimond.sicpscheme.parsing.ParsingError.UnknownIdentifier
 
 object Interpreter {
   def interpret(s: String): String = {
-    val tokens = Lexer.tokenize(s)
-    parsing.AstParser.parseAst(tokens) match {
-      case Left(err) => s"err: ${err.message}\n"
-      case Right(ast) => s"res: ${ast.value.toString}\n"
+    Lexer.tokenize(s) match {
+      case Nil => ""
+      case tokens =>
+        val nelTokens = NonEmptyList(tokens.head, tokens.tail)
+        parsing.AstParser.parseAst(nelTokens) match {
+          case Left(err) => err.show
+          case Right(ast) => s"res: ${ast.stringValue}\n" // TODO: DRY this
+        }
     }
   }
 }
